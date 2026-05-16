@@ -13,11 +13,11 @@ interface WorkoutRow {
 
 export default function Home() {
   const [text, setText] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState<"idle" | "extracting" | "creating">("idle");
   const [error, setError] = useState("");
 
   const handleGeneratePdf = async () => {
-    setIsLoading(true);
+    setProgress("extracting");
     setError("");
 
     try {
@@ -33,11 +33,17 @@ export default function Home() {
         throw new Error(data.error || "Failed to generate schedule");
       }
 
+      setProgress("creating");
+      
+      // Small artificial delay so React can visually update the button text 
+      // before the synchronous and blocking PDF generation freezes the main thread
+      await new Promise(resolve => setTimeout(resolve, 50));
+
       generatePdf(data.schedule);
     } catch (err: any) {
       setError(err.message);
     } finally {
-      setIsLoading(false);
+      setProgress("idle");
     }
   };
 
@@ -99,10 +105,14 @@ export default function Home() {
 
       <button
         onClick={handleGeneratePdf}
-        disabled={isLoading || !text.trim()}
+        disabled={progress !== "idle" || !text.trim()}
         className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
       >
-        {isLoading ? "Processing & Generating PDF..." : "Generate PDF Download"}
+        {progress === "extracting"
+          ? "Extracting and structuring schedule..."
+          : progress === "creating"
+          ? "Creating PDF..."
+          : "Generate PDF Download"}
       </button>
     </main>
   );
