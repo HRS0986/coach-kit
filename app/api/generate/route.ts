@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     const prompt = `Extract the workout schedule from the following text based on the provided JSON schema. Ensure sets and reps are converted properly.
     
     If the schedule only says reps like "12 / 10 / 8 / 6", that implies 4 sets.
-    If it explicitly lists sets like "4 x 6-8", generate a suitable reps array, just provide a representative array.
+    Some exercises do not have sets or reps, in that case, put the given value in the sets column and keep reps column empty.
     
     Workout Schedule Text:
     ${text}`;
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
             properties: {
               no: { type: Type.INTEGER, description: "Exercise number" },
               exercise: { type: Type.STRING, description: "Exercise name" },
-              sets: { type: Type.INTEGER, description: "Set count" },
+              sets: { type: Type.STRING, description: "Set count, can be a number like '4' or a number with unit like '5<unit>'" },
               reps: { 
                   type: Type.ARRAY, 
                   items: { type: Type.INTEGER },

@@ -7,7 +7,7 @@ import { useState } from "react";
 interface WorkoutRow {
   no: number;
   exercise: string;
-  sets: number;
+  sets: number | string;
   reps: number[];
 }
 
@@ -66,9 +66,18 @@ export default function Home() {
       head: [tableColumn],
       body: tableRows,
       theme: "grid",
+      headStyles: {
+        fillColor: "#1f3a5e", // Navy Blue
+        textColor: "#ffffff", // White
+      },
+      styles: {
+        lineColor: "#000000", // Black
+        textColor: "#000000", // Black text for the table body
+        cellPadding: 4, // Increased padding for all cells
+      },
     });
 
-    doc.save("workout-schedule.pdf");
+    doc.save(`workout-schedule-${new Date().toISOString().split("T")[0]}.pdf`);
   };
 
   return (
