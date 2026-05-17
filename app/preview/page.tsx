@@ -1,13 +1,17 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { buildPdf, DaySchedule } from "@/lib/pdf";
-import { ArrowLeft, ChevronDown, ChevronUp, Download, Plus, Trash2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { ArrowLeft, Calendar as CalendarIcon, ChevronDown, ChevronUp, Download, Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -16,9 +20,7 @@ export default function PreviewPage() {
   const [isClientDetailsOpen, setIsClientDetailsOpen] = useState(true);
   const [clientDetails, setClientDetails] = useState({
     clientName: "",
-    trainerName: "AI Trainer",
-    programName: "Personalized Program",
-    phase: "",
+    trainerName: "Ravindu Nimsara",
     age: "",
     height: "",
     weight: "",
@@ -104,11 +106,11 @@ export default function PreviewPage() {
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8">
       <div className="max-w-5xl mx-auto space-y-6">
         
-        <div className="flex items-center justify-between">
-          <Button variant="ghost" onClick={() => router.push("/")} className="text-slate-500 hover:text-slate-900">
+        <div className="flex items-center justify-start">
+          <Button variant="ghost" onClick={() => router.push("/")} className="text-slate-500 hover:text-slate-900 mr-2">
             <ArrowLeft className="w-4 h-4 mr-2" /> Back
           </Button>
-          <h1 className="text-2xl font-bold tracking-tight">Schedule Preview</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Workout Schedule Preview</h1>
         </div>
 
         {/* Collapsible Client Details */}
@@ -137,20 +139,30 @@ export default function PreviewPage() {
                   <Input value={clientDetails.clientName} onChange={(e) => handleClientDetailChange("clientName", e.target.value)} />
                 </div>
                 <div className="space-y-2">
-                  <Label>Trainer / Gym Name</Label>
-                  <Input value={clientDetails.trainerName} onChange={(e) => handleClientDetailChange("trainerName", e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Program Name</Label>
-                  <Input value={clientDetails.programName} onChange={(e) => handleClientDetailChange("programName", e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Workout Period / Phase</Label>
+                  <Label>Workout Period</Label>
                   <Input value={clientDetails.workoutPeriod} onChange={(e) => handleClientDetailChange("workoutPeriod", e.target.value)} placeholder="e.g., 4 weeks" />
                 </div>
-                <div className="space-y-2">
-                  <Label>Date</Label>
-                  <Input value={clientDetails.date} onChange={(e) => handleClientDetailChange("date", e.target.value)} placeholder="e.g., Oct 25, 2023" />
+                <div className="space-y-2 flex flex-col pt-2">
+                  <Label className="mb-1">Date</Label>
+                  <Popover>
+                    <PopoverTrigger 
+                      render={<Button variant="outline" className={cn("w-full justify-start text-left font-normal", !clientDetails.date && "text-slate-500")} />}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {clientDetails.date ? clientDetails.date : <span>Pick a date</span>}
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={
+                          clientDetails.date && !isNaN(new Date(clientDetails.date).getTime())
+                            ? new Date(clientDetails.date)
+                            : undefined
+                        }
+                        onSelect={(d) => handleClientDetailChange("date", d ? format(d, "PP") : "")}
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </div>
                 <div className="space-y-2">
                   <Label>Age</Label>
@@ -163,6 +175,14 @@ export default function PreviewPage() {
                 <div className="space-y-2">
                   <Label>Weight</Label>
                   <Input value={clientDetails.weight} onChange={(e) => handleClientDetailChange("weight", e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <Label>BMI</Label>
+                  <Input value={clientDetails.bmi} onChange={(e) => handleClientDetailChange("bmi", e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Trainer / Gym Name</Label>
+                  <Input value={clientDetails.trainerName} onChange={(e) => handleClientDetailChange("trainerName", e.target.value)} />
                 </div>
               </CardContent>
             </CollapsibleContent>

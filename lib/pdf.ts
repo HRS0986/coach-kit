@@ -18,8 +18,6 @@ export function buildPdf(
   opts: {
     clientName: string;
     trainerName: string;
-    programName: string;
-    phase: string;
     age?: string | number;
     height?: string | number;
     weight?: string | number;
@@ -30,7 +28,7 @@ export function buildPdf(
 ) {
   const doc = new jsPDF();
   const W = doc.internal.pageSize.getWidth();
-  const { clientName, trainerName, programName, phase, age, height, weight, bmi, workoutPeriod, date } = opts;
+  const { clientName, trainerName, age, height, weight, bmi, workoutPeriod, date } = opts;
 
   doc.setFillColor(245, 245, 245);
   doc.rect(0, 0, W, 56, "F");
@@ -48,9 +46,9 @@ export function buildPdf(
 
   doc.setFontSize(20);
   doc.setTextColor(30, 30, 30);
-  doc.text((programName || "WORKOUT SCHEDULE").toUpperCase(), 13, 28);
+  doc.text("WORKOUT SCHEDULE", 13, 28);
 
-  const phaseText = phase ? phase : workoutPeriod ? workoutPeriod : "";
+  const phaseText = workoutPeriod ? workoutPeriod : "";
   if (phaseText) {
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
@@ -97,8 +95,8 @@ export function buildPdf(
 
   // Draw tables for each day
   days.forEach((day, index) => {
-    // If not first day and close to bottom, add new page
-    if (index > 0 && tableBaseY > doc.internal.pageSize.getHeight() - 40) {
+    // Start each new day on a new page
+    if (index > 0) {
       doc.addPage();
       tableBaseY = 20;
     }
@@ -121,19 +119,19 @@ export function buildPdf(
       ]),
       theme: "grid",
       headStyles: {
-        fillColor: [0, 0, 0],
-        textColor: [255, 255, 255],
+        fillColor: "#1f3a5e",
+        textColor: "white",
         fontStyle: "bold",
-        fontSize: 7,
+        fontSize: 10,
         cellPadding: 4,
       },
       styles: {
         font: "helvetica",
         fontSize: 9,
-        textColor: [50, 50, 50],
-        cellPadding: 6,
-        lineColor: [230, 230, 230],
-        lineWidth: 0.1,
+        textColor: "black",
+        cellPadding: 4,
+        lineColor: "black",
+        lineWidth: 0.2,
       },
       columnStyles: {
         0: { cellWidth: 15 },
