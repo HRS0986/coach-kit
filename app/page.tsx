@@ -33,13 +33,12 @@ export default function Home() {
       }
 
       const data = await resp.json();
-      
+
       // Save data for the preview page
       sessionStorage.setItem("workoutData", JSON.stringify(data));
-      
+
       // Redirect to preview
       router.push("/preview");
-      
     } catch (err: any) {
       console.error(err);
       setError(err.message || "Failed to analyze schedule.");
@@ -50,25 +49,27 @@ export default function Home() {
   return (
     <div className="min-h-[calc(100vh-65px)] bg-slate-50 text-slate-900 font-sans p-4 md:p-8 flex items-center justify-center">
       <div className="max-w-6xl w-full grid grid-cols-1 gap-8 items-center">
-        
         {/* Left Column: Hero Text */}
         <div className="flex flex-col space-y-6">
           <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight text-slate-900">
-            <span className="text-[#1f3a5e]">Raw Text Into Deliverable  Workout Schedules</span>
+            <span className="text-[#1f3a5e]">
+              Raw Text Into Deliverable Workout Schedules
+            </span>
           </h1>
           <p className="text-lg text-slate-500">
-            Paste your messy WhatsApp or email messages. Our AI instantly organizes them into clear days and professional PDFs for your clients.
+            Paste your messy WhatsApp or email messages. Our AI instantly
+            organizes them into clear days and professional PDFs for your
+            clients.
           </p>
-          
         </div>
 
         {/* Right Column: Input Area */}
         <Card className="border-slate-200 shadow-xl shadow-slate-200/50 rounded-2xl overflow-hidden bg-white py-0">
-          <CardContent className="p-0 flex flex-col h-full"> 
+          <CardContent className="p-0 flex flex-col h-full">
             <div className="bg-slate-200 border-b border-slate-100 p-4 px-6 flex items-center text-sm font-medium text-slate-500">
               Paste your raw schedule below
             </div>
-            
+
             <div className="relative grow">
               <Textarea
                 value={text}
@@ -95,10 +96,10 @@ Bicep Curls 4 sets 12`}
             )}
 
             <div className="p-6 bg-slate-200 border-t border-slate-100">
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 className="w-full h-14 text-lg bg-[#1f3a5e] hover:bg-[#1a2f4a] text-white rounded-xl transition-all"
-                onClick={handleAnalyze} 
+                onClick={handleAnalyze}
                 disabled={loading || !text}
               >
                 {loading ? (
@@ -113,7 +114,6 @@ Bicep Curls 4 sets 12`}
             </div>
           </CardContent>
         </Card>
-
       </div>
     </div>
   );
