@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { AlertCircle, Dumbbell, Flame, Loader2 } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -48,43 +48,28 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8 flex items-center justify-center">
-      <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+    <div className="min-h-[calc(100vh-65px)] bg-slate-50 text-slate-900 font-sans p-4 md:p-8 flex items-center justify-center">
+      <div className="max-w-6xl w-full grid grid-cols-1 gap-8 items-center">
         
         {/* Left Column: Hero Text */}
         <div className="flex flex-col space-y-6">
-          <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center">
-            <Dumbbell className="w-6 h-6" />
-          </div>
           <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight text-slate-900">
-            Convert raw text into <br className="hidden lg:block" />
-            <span className="text-blue-600">beautiful schedules.</span>
+            <span className="text-[#1f3a5e]">Raw Text Into Deliverable  Workout Schedules</span>
           </h1>
-          <p className="text-lg text-slate-500 max-w-md">
+          <p className="text-lg text-slate-500">
             Paste your messy WhatsApp or email messages. Our AI instantly organizes them into clear days and professional PDFs for your clients.
           </p>
-          <ul className="space-y-3 pt-4">
-            {[
-              "Automatically extracts exercises, sets, and reps",
-              "Groups exercises by training days automatically",
-              "Smart formatting into professional tables",
-            ].map((item, i) => (
-              <li key={i} className="flex items-center text-slate-600">
-                <Flame className="w-5 h-5 mr-3 text-orange-500" />
-                {item}
-              </li>
-            ))}
-          </ul>
+          
         </div>
 
         {/* Right Column: Input Area */}
-        <Card className="border-slate-200 shadow-xl shadow-slate-200/50 rounded-2xl overflow-hidden bg-white">
+        <Card className="border-slate-200 shadow-xl shadow-slate-200/50 rounded-2xl overflow-hidden bg-white py-0">
           <CardContent className="p-0 flex flex-col h-full"> 
-            <div className="bg-slate-50 border-b border-slate-100 p-4 px-6 flex items-center text-sm font-medium text-slate-500">
+            <div className="bg-slate-200 border-b border-slate-100 p-4 px-6 flex items-center text-sm font-medium text-slate-500">
               Paste your raw schedule below
             </div>
             
-            <div className="relative flex-grow">
+            <div className="relative grow">
               <Textarea
                 value={text}
                 onChange={(e) => setText(e.target.value)}
@@ -109,10 +94,10 @@ Bicep Curls 4 sets 12`}
               </div>
             )}
 
-            <div className="p-6 bg-slate-50 border-t border-slate-100">
+            <div className="p-6 bg-slate-200 border-t border-slate-100">
               <Button 
                 size="lg" 
-                className="w-full h-14 text-lg bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all"
+                className="w-full h-14 text-lg bg-[#1f3a5e] hover:bg-[#1a2f4a] text-white rounded-xl transition-all"
                 onClick={handleAnalyze} 
                 disabled={loading || !text}
               >

@@ -103,7 +103,7 @@ export default function PreviewPage() {
   if (days.length === 0) return null; // loading or redirecting
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8">
+    <div className="min-h-[calc(100vh-65px)] bg-slate-50 text-slate-900 font-sans p-4 md:p-8">
       <div className="max-w-5xl mx-auto space-y-6">
         
         <div className="flex items-center justify-start">
@@ -196,14 +196,14 @@ export default function PreviewPage() {
             <CardDescription>Review and modify the extracted exercises day by day.</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
-            <Tabs defaultValue="day-0" className="w-full">
-              <div className="overflow-x-auto border-b border-slate-100">
-                <TabsList className="bg-transparent h-auto p-4 flex w-max min-w-full justify-start space-x-2">
+            <Tabs defaultValue="day-0" className="flex flex-col md:flex-row w-full" orientation="vertical">
+              <div className="w-full md:w-48 lg:w-64 border-b md:border-b-0 md:border-r border-slate-100 bg-slate-50/30">
+                <TabsList className="bg-transparent h-auto p-4 flex flex-row md:flex-col w-full justify-start space-x-2 md:space-x-0 md:space-y-2 overflow-x-auto">
                   {days.map((day, idx) => (
                     <TabsTrigger 
                       key={idx} 
                       value={`day-${idx}`}
-                      className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:shadow-none border border-transparent data-[state=active]:border-blue-100 px-4 py-2 rounded-lg"
+                      className="w-full justify-start data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:shadow-none border border-transparent data-[state=active]:border-blue-100 px-4 py-2 rounded-lg text-left whitespace-nowrap"
                     >
                       {day.dayName || `Day ${idx + 1}`}
                     </TabsTrigger>
@@ -211,8 +211,9 @@ export default function PreviewPage() {
                 </TabsList>
               </div>
 
-              {days.map((day, dayIndex) => (
-                <TabsContent key={dayIndex} value={`day-${dayIndex}`} className="p-6 m-0 outline-none">
+              <div className="flex-1 overflow-hidden">
+                {days.map((day, dayIndex) => (
+                  <TabsContent key={dayIndex} value={`day-${dayIndex}`} className="p-6 m-0 outline-none w-full">
                   <div className="mb-6 space-y-2 md:w-1/2">
                     <Label className="text-slate-500">Day Name / Label</Label>
                     <Input 
@@ -272,6 +273,7 @@ export default function PreviewPage() {
                   </div>
                 </TabsContent>
               ))}
+              </div>
             </Tabs>
           </CardContent>
         </Card>
