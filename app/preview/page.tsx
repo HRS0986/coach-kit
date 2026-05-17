@@ -110,7 +110,7 @@ export default function PreviewPage() {
           <Button variant="ghost" onClick={() => router.push("/")} className="text-slate-500 hover:text-slate-900 mr-2">
             <ArrowLeft className="w-4 h-4 mr-2" /> Back
           </Button>
-          <h1 className="text-2xl font-bold tracking-tight">Workout Schedule Preview</h1>
+          <h1 className="text-2xl text-[#1f3a5e] font-bold tracking-tight">Workout Schedule Preview</h1>
         </div>
 
         {/* Collapsible Client Details */}
@@ -119,9 +119,9 @@ export default function PreviewPage() {
           onOpenChange={setIsClientDetailsOpen}
           className="w-full"
         >
-          <Card className="border-slate-200 shadow-sm rounded-xl overflow-hidden">
+          <Card className="border-slate-200 shadow-sm rounded-xl overflow-hidden py-0">
             <CollapsibleTrigger className="w-full text-left [&>*]:w-full">
-              <CardHeader className="flex flex-row items-center justify-between cursor-pointer bg-white hover:bg-slate-50/50 transition-colors p-6">
+              <CardHeader className="flex flex-row items-center justify-between cursor-pointer bg-slate-100 px-6 pb-4 pt-2">
                 <div>
                   <CardTitle>Client Details</CardTitle>
                   <CardDescription>Edit the personal and program information for the header.</CardDescription>
@@ -190,20 +190,20 @@ export default function PreviewPage() {
         </Collapsible>
 
         {/* Schedule Tabs */}
-        <Card className="border-slate-200 shadow-sm rounded-xl overflow-hidden bg-white">
-          <CardHeader className="border-b border-slate-100 bg-slate-50/50">
+        <Card className="border-slate-200 shadow-sm rounded-xl overflow-hidden bg-white pt-0">
+          <CardHeader className="border-b border-slate-100 bg-slate-100 pt-2">
             <CardTitle>Workout Schedule</CardTitle>
             <CardDescription>Review and modify the extracted exercises day by day.</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             <Tabs defaultValue="day-0" className="flex flex-col md:flex-row w-full" orientation="vertical">
-              <div className="w-full md:w-48 lg:w-64 border-b md:border-b-0 md:border-r border-slate-100 bg-slate-50/30">
+              <div className="w-full md:w-48 lg:w-64 border-b md:border-b-0 md:border-r">
                 <TabsList className="bg-transparent h-auto p-4 flex flex-row md:flex-col w-full justify-start space-x-2 md:space-x-0 md:space-y-2 overflow-x-auto">
                   {days.map((day, idx) => (
                     <TabsTrigger 
                       key={idx} 
                       value={`day-${idx}`}
-                      className="w-full justify-start data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:shadow-none border border-transparent data-[state=active]:border-blue-100 px-4 py-2 rounded-lg text-left whitespace-nowrap"
+                      className="w-full justify-start data-active:bg-[#1f3a5e] data-[state=active]:bg-[#1f3a5e] data-active:text-white data-[state=active]:text-white data-active:opacity-100 data-active:shadow-md border border-transparent hover:bg-slate-100 data-active:hover:bg-[#1f3a5e] px-4 py-2.5 rounded-lg text-left whitespace-nowrap transition-colors font-medium opacity-70"
                     >
                       {day.dayName || `Day ${idx + 1}`}
                     </TabsTrigger>
@@ -280,7 +280,7 @@ export default function PreviewPage() {
 
         {/* Generate Button */}
         <div className="sticky bottom-6 flex justify-end">
-          <Button size="lg" onClick={generatePDF} className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg px-8 rounded-full h-14 text-lg">
+          <Button size="lg" onClick={generatePDF} className="bg-[#1f3a5e] hover:bg-[#1a2f4a] text-white shadow-lg px-8 rounded-full h-14 text-lg">
             <Download className="w-5 h-5 mr-3" />
             Export as PDF
           </Button>
