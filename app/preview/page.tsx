@@ -121,7 +121,7 @@ export default function PreviewPage() {
         >
           <Card className="border-slate-200 shadow-sm rounded-xl overflow-hidden py-0">
             <CollapsibleTrigger className="w-full text-left [&>*]:w-full">
-              <CardHeader className="flex flex-row items-center justify-between cursor-pointer bg-slate-100 px-6 pb-4 pt-2">
+              <CardHeader className="flex flex-row items-center justify-between cursor-pointer bg-slate-200 px-6 pb-4 pt-2">
                 <div>
                   <CardTitle>Client Details</CardTitle>
                   <CardDescription>Edit the personal and program information for the header.</CardDescription>
@@ -191,7 +191,7 @@ export default function PreviewPage() {
 
         {/* Schedule Tabs */}
         <Card className="border-slate-200 shadow-sm rounded-xl overflow-hidden bg-white pt-0">
-          <CardHeader className="border-b border-slate-100 bg-slate-100 pt-2">
+          <CardHeader className="border-b border-slate-100 bg-slate-200 pt-2">
             <CardTitle>Workout Schedule</CardTitle>
             <CardDescription>Review and modify the extracted exercises day by day.</CardDescription>
           </CardHeader>
@@ -214,7 +214,7 @@ export default function PreviewPage() {
               <div className="flex-1 overflow-hidden">
                 {days.map((day, dayIndex) => (
                   <TabsContent key={dayIndex} value={`day-${dayIndex}`} className="p-6 m-0 outline-none w-full">
-                  <div className="mb-6 space-y-2 md:w-1/2">
+                  <div className="mb-6 space-y-2">
                     <Label className="text-slate-500">Day Name / Label</Label>
                     <Input 
                       value={day.dayName} 
@@ -225,7 +225,7 @@ export default function PreviewPage() {
 
                   <div className="space-y-4">
                     {day.exercises.map((exercise, exIndex) => (
-                      <div key={exIndex} className="flex flex-col md:flex-row gap-3 p-4 bg-slate-50 border border-slate-100 rounded-lg group">
+                      <div key={exIndex} className="flex flex-col md:flex-row gap-3 p-4 bg-slate-100 border border-slate-100 rounded-lg group">
                         <div className="flex-1 space-y-1">
                           <Label className="text-xs text-slate-500">Exercise</Label>
                           <Input 
