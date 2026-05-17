@@ -30,21 +30,35 @@ export async function POST(request: Request) {
       config: {
         responseMimeType: "application/json",
         responseSchema: {
-          type: Type.ARRAY,
-          items: {
-            type: Type.OBJECT,
-            properties: {
-              no: { type: Type.INTEGER, description: "Exercise number" },
-              exercise: { type: Type.STRING, description: "Exercise name" },
-              sets: { type: Type.STRING, description: "Set count, can be a number like '4' or a number with unit like '5<unit>'" },
-              reps: { 
-                  type: Type.ARRAY, 
-                  items: { type: Type.INTEGER },
-                  description: "Reps count per set" 
+          type: Type.OBJECT,
+          properties: {
+            name: { type: Type.STRING, description: "Name of the client" },
+            age: { type: Type.INTEGER, description: "Age of the client" },
+            height: { type: Type.NUMBER, description: "Height of the client" },
+            weight: { type: Type.NUMBER, description: "Weight of the client" },
+            bmi: { type: Type.NUMBER, description: "Body Mass Index of the client" },
+            workoutPeriod: { type: Type.STRING, description: "Workout period (e.g., '4 weeks')" },
+            date: { type: Type.STRING, description: "Date of the workout schedule" },
+            schedule: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  no: { type: Type.INTEGER, description: "Exercise number" },
+                  exercise: { type: Type.STRING, description: "Exercise name" },
+                  sets: { type: Type.STRING, description: "Set count, can be a number like '4' or a number with unit like '5<unit>'" },
+                  reps: { 
+                      type: Type.ARRAY, 
+                      items: { type: Type.INTEGER },
+                      description: "Reps count per set" 
+                  }
+                },
+                required: ["no", "exercise", "sets", "reps"],
+                description: "Array of workout exercises, each with exercise name, set count, and reps count per set"
               }
-            },
-            required: ["no", "exercise", "sets", "reps"]
-          }
+            }
+          },
+          required: ["schedule"]
         }
       }
     });
@@ -55,10 +69,10 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "No content returned from Gemini" }, { status: 500 });
     }
 
-    // The result is already a JSON string matching exactly our array schema (due to responseMimeType and responseSchema)
+    // The result is already a JSON object matching exactly our schema (due to responseMimeType and responseSchema)
     const jsonOutput = JSON.parse(content);
 
-    return NextResponse.json({ schedule: jsonOutput });
+    return NextResponse.json(jsonOutput);
 
   } catch (error) {
     console.error("Error formatting schedule:", error);
