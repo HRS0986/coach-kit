@@ -36,9 +36,59 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    DragEndEvent,
+} from '@dnd-kit/core';
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
+function SortableTabTrigger({ id, dayName }: { id: string, dayName: string }) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging,
+    } = useSortable({ id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+        zIndex: isDragging ? 10 : 1,
+        position: isDragging ? 'relative' : undefined,
+    } as React.CSSProperties;
+
+    return (
+        <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="w-full shrink-0">
+            <TabsTrigger
+                value={id}
+                className={cn(
+                    "w-full justify-start data-active:bg-[#1f3a5e] data-[state=active]:bg-[#1f3a5e] data-active:text-white data-[state=active]:text-white data-active:opacity-100 data-active:shadow-md border border-transparent hover:bg-slate-100 data-active:hover:bg-[#1f3a5e] px-4 py-2.5 rounded-lg text-left whitespace-nowrap transition-colors font-medium opacity-70",
+                    isDragging && "shadow-lg bg-slate-100 cursor-grabbing"
+                )}
+            >
+                {dayName}
+            </TabsTrigger>
+        </div>
+    );
+}
 
 export default function PreviewPage() {
     const router = useRouter();
+    const [activeTab, setActiveTab] = useState<string>("");
     const [isClientDetailsOpen, setIsClientDetailsOpen] = useState(true);
     const [clientDetails, setClientDetails] = useState({
         clientName: "",
@@ -58,7 +108,11 @@ export default function PreviewPage() {
         if (storedSchedule) {
             try {
                 const parsed = JSON.parse(storedSchedule);
-                if (parsed.days) setDays(parsed.days);
+                if (parsed.days) {
+                    const daysWithId = parsed.days.map((d: any) => ({ ...d, id: d.id || Math.random().toString(36).substring(2, 9) }));
+                    setDays(daysWithId);
+                    if (daysWithId.length > 0) setActiveTab(daysWithId[0].id);
+                }
                 setClientDetails((prev) => ({
                     ...prev,
                     clientName: parsed.name || prev.clientName,
@@ -77,6 +131,30 @@ export default function PreviewPage() {
             router.push("/");
         }
     }, [router]);
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 5,
+            },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+
+        if (over && active.id !== over.id) {
+            setDays((items) => {
+                const oldIndex = items.findIndex(item => item.id === active.id);
+                const newIndex = items.findIndex(item => item.id === over.id);
+
+                return arrayMove(items, oldIndex, newIndex);
+            });
+        }
+    };
 
     const handleClientDetailChange = (field: string, value: string) => {
         setClientDetails((prev) => ({ ...prev, [field]: value }));
@@ -294,29 +372,36 @@ export default function PreviewPage() {
                     </CardHeader>
                     <CardContent className="p-0">
                         <Tabs
-                            defaultValue="day-0"
+                            value={activeTab}
+                            onValueChange={setActiveTab}
                             className="flex flex-col md:flex-row w-full"
                             orientation="vertical"
                         >
                             <div className="w-full md:w-48 lg:w-64 border-b md:border-b-0 md:border-r">
                                 <TabsList className="bg-transparent h-auto p-4 flex flex-row md:flex-col w-full justify-start space-x-2 md:space-x-0 md:space-y-2 overflow-x-auto">
-                                    {days.map((day, idx) => (
-                                        <TabsTrigger
-                                            key={idx}
-                                            value={`day-${idx}`}
-                                            className="w-full justify-start data-active:bg-[#1f3a5e] data-[state=active]:bg-[#1f3a5e] data-active:text-white data-[state=active]:text-white data-active:opacity-100 data-active:shadow-md border border-transparent hover:bg-slate-100 data-active:hover:bg-[#1f3a5e] px-4 py-2.5 rounded-lg text-left whitespace-nowrap transition-colors font-medium opacity-70"
-                                        >
-                                            {day.dayName || `Day ${idx + 1}`}
-                                        </TabsTrigger>
-                                    ))}
+                                    <DndContext 
+                                        sensors={sensors}
+                                        collisionDetection={closestCenter}
+                                        onDragEnd={handleDragEnd}
+                                    >
+                                        <SortableContext items={days.map(d => d.id)}>
+                                            {days.map((day, idx) => (
+                                                <SortableTabTrigger
+                                                    key={day.id}
+                                                    id={day.id}
+                                                    dayName={day.dayName || `Day ${idx + 1}`}
+                                                />
+                                            ))}
+                                        </SortableContext>
+                                    </DndContext>
                                 </TabsList>
                             </div>
 
                             <div className="flex-1 overflow-hidden">
                                 {days.map((day, dayIndex) => (
                                     <TabsContent
-                                        key={dayIndex}
-                                        value={`day-${dayIndex}`}
+                                        key={day.id}
+                                        value={day.id}
                                         className="p-6 m-0 outline-none w-full"
                                     >
                                         <div className="mb-6 space-y-2">

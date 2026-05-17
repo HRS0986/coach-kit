@@ -9,6 +9,7 @@ export interface ExerciseRow {
 }
 
 export interface DaySchedule {
+    id: string;
     dayName: string;
     exercises: ExerciseRow[];
 }
