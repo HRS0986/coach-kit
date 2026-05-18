@@ -22,12 +22,16 @@ export default function Home() {
   }, [user, authLoading, router]);
 
   const handleGoogleLogin = async () => {
+    // Start the sign in process immediately to prevent popup blockers
+    // from blocking it due to delayed execution after state updates.
+    const provider = new GoogleAuthProvider();
+    const signInPromise = signInWithPopup(auth, provider);
+
     setLoading(true);
     setError("");
 
     try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
+      const result = await signInPromise;
       
       const email = result.user?.email;
       if (!email || !ALLOWED_EMAILS.includes(email)) {
