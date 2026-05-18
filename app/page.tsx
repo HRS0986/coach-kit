@@ -2,130 +2,104 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { AlertCircle, Loader2, Sparkles, FilePlus } from "lucide-react";
+import { ALLOWED_EMAILS, useAuth } from "@/lib/auth-context";
+import { auth } from "@/lib/firebase";
+import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const router = useRouter();
-  const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const { user, loading: authLoading } = useAuth();
 
-  const handleAnalyze = async () => {
-    if (!text.trim()) {
-      setError("Please paste a workout schedule to analyze.");
-      return;
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.replace("/dashboard");
     }
+  }, [user, authLoading, router]);
+
+  const handleGoogleLogin = async () => {
     setLoading(true);
     setError("");
 
     try {
-      const resp = await fetch("/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
-      });
-
-      if (!resp.ok) {
-        throw new Error(await resp.text());
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      
+      const email = result.user?.email;
+      if (!email || !ALLOWED_EMAILS.includes(email)) {
+        await signOut(auth);
+        setError("Your email is not authorized to access this app.");
+        setLoading(false);
+        return;
       }
 
-      const data = await resp.json();
-
-      // Save data for the preview page
-      sessionStorage.setItem("workoutData", JSON.stringify(data));
-
-      // Redirect to preview
-      router.push("/preview");
+      router.push("/dashboard");
     } catch (err: any) {
       console.error(err);
-      setError(err.message || "Failed to analyze schedule.");
+      if (err.code !== 'auth/popup-closed-by-user') {
+        setError("Failed to log in with Google.");
+      }
       setLoading(false);
     }
   };
 
+  if (authLoading) return null;
+
   return (
     <div className="min-h-[calc(100vh-65px)] bg-slate-50 text-slate-900 font-sans p-4 md:p-8 flex items-center justify-center">
-      <div className="max-w-6xl w-full grid grid-cols-1 gap-8 items-center">
-        {/* Left Column: Hero Text */}
-        <div className="flex flex-col space-y-6">
-          <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight text-slate-900">
-            <span className="text-[#1f3a5e]">
-              Raw Text Into Deliverable Workout Schedules
-            </span>
+      <div className="max-w-md w-full grid grid-cols-1 gap-8 items-center">
+        <div className="flex flex-col space-y-2 text-center">
+          <h1 className="text-3xl font-extrabold tracking-tight text-[#1f3a5e]">
+            Welcome to CoachKit
           </h1>
-          <p className="text-lg text-slate-500">
-            Paste your messy WhatsApp or email messages. Our AI instantly
-            organizes them into clear days and professional PDFs for your
-            clients.
+          <p className="text-slate-500">
+            Log in to manage and format workout schedules.
           </p>
         </div>
 
-        {/* Right Column: Input Area */}
-        <Card className="border-slate-200 shadow-xl shadow-slate-200/50 rounded-2xl overflow-hidden bg-white py-0">
-          <CardContent className="p-0 flex flex-col h-full">
-            <div className="bg-slate-200 border-b border-slate-100 p-4 px-6 flex items-center text-sm font-medium text-slate-500">
-              Paste your raw schedule below
-            </div>
+        <Card className="border-slate-200 shadow-xl shadow-slate-200/50 rounded-2xl overflow-hidden bg-white">
+          <CardContent className="p-8">
+            <div className="space-y-6">
+              {error && (
+                <div className="bg-red-50 text-red-600 p-4 text-sm flex items-center rounded-lg border border-red-100">
+                  <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0" />
+                  {error}
+                </div>
+              )}
 
-            <div className="relative grow">
-              <Textarea
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                className="min-h-[400px] border-0 rounded-none shadow-none focus-visible:ring-0 resize-none p-6 text-base"
-                placeholder={`Example:
-Day 1 - Chest/Triceps
-Bench Press: 4 sets of 10-12
-Incline DB Press: 3x10
-Tricep Pushdown - 4/12
-
-Day 2 - Back/Biceps
-Lat Pulldown 4 sets 10
-Barbell Row 3x8
-Bicep Curls 4 sets 12`}
-              />
-            </div>
-
-            {error && (
-              <div className="bg-red-50 text-red-600 p-4 text-sm flex items-center border-t border-red-100">
-                <AlertCircle className="w-4 h-4 mr-2" />
-                {error}
-              </div>
-            )}
-
-            <div className="p-6 bg-slate-200 border-t border-slate-100 flex flex-col sm:flex-row gap-4">
               <Button
                 size="lg"
-                className="w-full flex-1 h-14 text-lg bg-[#1f3a5e] hover:bg-[#1a2f4a] text-white rounded-xl transition-all"
-                onClick={handleAnalyze}
-                disabled={loading || !text}
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    Analyzing raw text...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-5 h-5 mr-2" />
-                    Create Schedule With AI
-                  </>
-                )}
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="w-full flex-1 h-14 text-lg rounded-xl transition-all border-slate-300 bg-white hover:bg-slate-50 text-slate-700"
-                onClick={() => {
-                  sessionStorage.setItem("workoutData", JSON.stringify({ days: [], isManual: true }));
-                  router.push("/preview");
-                }}
+                onClick={handleGoogleLogin}
+                className="w-full bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-sm rounded-xl transition-all font-medium h-14"
                 disabled={loading}
               >
-                <FilePlus className="w-5 h-5 mr-2" />
-                Create Schedule Manually
+                {loading ? (
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                ) : (
+                  <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
+                    <path
+                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                      fill="#4285F4"
+                    />
+                    <path
+                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                      fill="#34A853"
+                    />
+                    <path
+                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                      fill="#FBBC05"
+                    />
+                    <path
+                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                      fill="#EA4335"
+                    />
+                  </svg>
+                )}
+                {loading ? "Logging in..." : "Continue with Google"}
               </Button>
             </div>
           </CardContent>

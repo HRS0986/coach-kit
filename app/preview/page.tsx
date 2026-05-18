@@ -53,6 +53,8 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { useAuth } from "@/lib/auth-context";
+
 function SortableTabTrigger({ id, dayName }: { id: string, dayName: string }) {
     const {
         attributes,
@@ -103,8 +105,14 @@ export default function PreviewPage() {
     const [days, setDays] = useState<DaySchedule[]>([]);
     const [isLoaded, setIsLoaded] = useState(false);
     const [isManual, setIsManual] = useState(false);
+    const { user, loading: authLoading } = useAuth();
 
     useEffect(() => {
+        if (!authLoading && !user) {
+            router.replace("/");
+            return;
+        }
+
         // Read from session storage on mount
         const storedSchedule = sessionStorage.getItem("workoutData");
         if (storedSchedule) {
@@ -132,11 +140,11 @@ export default function PreviewPage() {
                 console.error("Failed to parse stored schedule");
             }
             setIsLoaded(true);
-        } else {
+        } else if (!authLoading) {
             // If no data, send back to home
-            router.push("/");
+            router.push("/dashboard");
         }
-    }, [router]);
+    }, [router, authLoading, user]);
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -225,7 +233,7 @@ export default function PreviewPage() {
         buildPdf(days, clientDetails);
     };
 
-    if (!isLoaded) return null; // loading or redirecting
+    if (!isLoaded || authLoading) return null; // loading or redirecting
 
     return (
         <div className="min-h-[calc(100vh-65px)] bg-slate-50 text-slate-900 font-sans p-4 md:p-8">
@@ -233,7 +241,7 @@ export default function PreviewPage() {
                 <div className="flex items-center justify-start">
                     <Button
                         variant="ghost"
-                        onClick={() => router.push("/")}
+                        onClick={() => router.push("/dashboard")}
                         className="text-slate-500 hover:text-slate-900 mr-2"
                     >
                         <ArrowLeft className="w-4 h-4 mr-2" /> Back
