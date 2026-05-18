@@ -56,7 +56,7 @@ export function buildPdf(
             const hasExtra = workoutPeriod || date;
             const rectHeight = hasDetails && hasExtra ? 40 : (hasDetails || hasExtra ? 28 : 20);
 
-            doc.setFillColor("#f4f4f4");
+            doc.setFillColor(256, 256, 256); // Light background
             doc.setDrawColor(0, 0, 0);
             doc.setLineWidth(0.2);
             doc.rect(13, currentY, W - 26, rectHeight, "FD"); // Draw filled rectangle with border
@@ -124,7 +124,7 @@ export function buildPdf(
         // 3. Workout schedule table
         autoTable(doc, {
             startY: currentY + 10,
-            head: [["#", "Exercise", "Sets", "Reps"]],
+            head: [["No", "Exercise", "Sets", "Reps"]],
             body: day.exercises.map((row, i) => [
                 (i + 1).toString(), // Using array index or row.no
                 row.exercise,
