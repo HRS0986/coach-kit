@@ -7,6 +7,7 @@ import { auth } from "./firebase";
 // Add the emails you want to allow here
 export const ALLOWED_EMAILS = [
   "heshanhfernando@gmail.com",
+  "ravindunimsara.slk@gmail.com",
 ];
 
 interface AuthContextType {
