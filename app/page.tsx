@@ -32,7 +32,7 @@ export default function Home() {
 
     try {
       const result = await signInPromise;
-      
+
       const email = result.user?.email;
       if (!email || !ALLOWED_EMAILS.includes(email)) {
         await signOut(auth);
@@ -57,16 +57,14 @@ export default function Home() {
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col md:flex-row">
       {/* Left Side: Decorative/Image Panel */}
       <div className="hidden md:flex md:w-1/2 lg:w-3/5 relative bg-slate-900 overflow-hidden items-center justify-center">
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: "url('/login-bg.jpg')" }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 to-slate-900/20" />
-        
+
         <div className="relative z-10 max-w-lg p-8 md:p-12">
-          <div className="inline-flex items-center justify-center p-3 bg-blue-500/20 text-blue-400 rounded-2xl mb-6 backdrop-blur-md border border-blue-500/20">
-            <Dumbbell className="w-8 h-8" />
-          </div>
+
           <h1 className="text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight mb-6">
             Build incredible programs, in a fraction of the time
           </h1>
@@ -130,7 +128,7 @@ export default function Home() {
                     {loading ? "Authenticating..." : "Continue with Google"}
                   </Button>
                 </div>
-                
+
                 <div className="text-center mt-6">
                   <p className="text-xs text-slate-400">
                     Only authorized accounts can access the platform. <br className="hidden sm:block" /> Please contact an administrator to request access.
