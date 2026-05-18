@@ -4,8 +4,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "CoachKit — Trainer PDF Generator",
-  description: "Turn workout schedules into professional PDF documents instantly.",
+  title: "CoachKit | Deliverable Workouts",
+  description: "Turn messy workout texts into beautifully formatted, ready-to-share PDF schedules.",
 };
 
 export default function RootLayout({
