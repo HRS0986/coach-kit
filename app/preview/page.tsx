@@ -24,6 +24,22 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { buildPdf, DaySchedule } from "@/lib/pdf";
 import { cn } from "@/lib/utils";
+import {
+    closestCenter,
+    DndContext,
+    DragEndEvent,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+} from '@dnd-kit/core';
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { format } from "date-fns";
 import {
     ArrowLeft,
@@ -36,22 +52,6 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-    DndContext,
-    closestCenter,
-    KeyboardSensor,
-    PointerSensor,
-    useSensor,
-    useSensors,
-    DragEndEvent,
-} from '@dnd-kit/core';
-import {
-    arrayMove,
-    SortableContext,
-    sortableKeyboardCoordinates,
-    useSortable,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 
 function SortableTabTrigger({ id, dayName }: { id: string, dayName: string }) {
     const {
@@ -101,6 +101,8 @@ export default function PreviewPage() {
         date: "",
     });
     const [days, setDays] = useState<DaySchedule[]>([]);
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [isManual, setIsManual] = useState(false);
 
     useEffect(() => {
         // Read from session storage on mount
@@ -108,6 +110,9 @@ export default function PreviewPage() {
         if (storedSchedule) {
             try {
                 const parsed = JSON.parse(storedSchedule);
+                if (parsed.isManual) {
+                    setIsManual(true);
+                }
                 if (parsed.days) {
                     const daysWithId = parsed.days.map((d: any) => ({ ...d, id: d.id || Math.random().toString(36).substring(2, 9) }));
                     setDays(daysWithId);
@@ -126,6 +131,7 @@ export default function PreviewPage() {
             } catch (err) {
                 console.error("Failed to parse stored schedule");
             }
+            setIsLoaded(true);
         } else {
             // If no data, send back to home
             router.push("/");
@@ -204,11 +210,22 @@ export default function PreviewPage() {
         setDays(updatedDays);
     };
 
+    const handleAddDay = () => {
+        const newDayId = Math.random().toString(36).substring(2, 9);
+        const newDayName = `Day ${days.length + 1}`;
+        setDays([...days, {
+            id: newDayId,
+            dayName: newDayName,
+            exercises: []
+        }]);
+        setActiveTab(newDayId);
+    };
+
     const generatePDF = () => {
         buildPdf(days, clientDetails);
     };
 
-    if (days.length === 0) return null; // loading or redirecting
+    if (!isLoaded) return null; // loading or redirecting
 
     return (
         <div className="min-h-[calc(100vh-65px)] bg-slate-50 text-slate-900 font-sans p-4 md:p-8">
@@ -222,7 +239,7 @@ export default function PreviewPage() {
                         <ArrowLeft className="w-4 h-4 mr-2" /> Back
                     </Button>
                     <h1 className="text-2xl text-[#1f3a5e] font-bold tracking-tight">
-                        Workout Schedule Preview
+                        {isManual ? "Create Workout Schedule" : "Workout Schedule Preview"}
                     </h1>
                 </div>
 
@@ -394,6 +411,13 @@ export default function PreviewPage() {
                                             ))}
                                         </SortableContext>
                                     </DndContext>
+                                    <Button
+                                        variant="outline"
+                                        onClick={handleAddDay}
+                                        className="w-full mt-2 border-dashed border-2 text-slate-500 hover:text-slate-900 border-slate-200 shrink-0"
+                                    >
+                                        <Plus className="w-4 h-4 mr-2" /> Add Day
+                                    </Button>
                                 </TabsList>
                             </div>
 

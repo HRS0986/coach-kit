@@ -43,7 +43,7 @@ export function buildPdf(
         // 1. Day name/label (centered horizontally)
         doc.setFont("segoe-ui", "bold");
         doc.setFontSize(14);
-        doc.setTextColor(20, 20, 20);
+        doc.setTextColor(255, 0, 0);
         const dayText = day.dayName ? day.dayName.toUpperCase() : `DAY ${index + 1}`;
         const dayTextWidth = doc.getTextWidth(dayText);
         doc.text(dayText, (W - dayTextWidth) / 2, currentY);

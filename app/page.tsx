@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle, Loader2, Sparkles, FilePlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -95,21 +95,37 @@ Bicep Curls 4 sets 12`}
               </div>
             )}
 
-            <div className="p-6 bg-slate-200 border-t border-slate-100">
+            <div className="p-6 bg-slate-200 border-t border-slate-100 flex flex-col sm:flex-row gap-4">
               <Button
                 size="lg"
-                className="w-full h-14 text-lg bg-[#1f3a5e] hover:bg-[#1a2f4a] text-white rounded-xl transition-all"
+                className="w-full flex-1 h-14 text-lg bg-[#1f3a5e] hover:bg-[#1a2f4a] text-white rounded-xl transition-all"
                 onClick={handleAnalyze}
                 disabled={loading || !text}
               >
                 {loading ? (
                   <>
                     <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    Analyzing structure...
+                    Analyzing raw text...
                   </>
                 ) : (
-                  "Create Schedule"
+                  <>
+                    <Sparkles className="w-5 h-5 mr-2" />
+                    Create Schedule With AI
+                  </>
                 )}
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full flex-1 h-14 text-lg rounded-xl transition-all border-slate-300 bg-white hover:bg-slate-50 text-slate-700"
+                onClick={() => {
+                  sessionStorage.setItem("workoutData", JSON.stringify({ days: [], isManual: true }));
+                  router.push("/preview");
+                }}
+                disabled={loading}
+              >
+                <FilePlus className="w-5 h-5 mr-2" />
+                Create Schedule Manually
               </Button>
             </div>
           </CardContent>
