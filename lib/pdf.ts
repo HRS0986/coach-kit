@@ -56,7 +56,7 @@ export function buildPdf(
             const hasExtra = workoutPeriod || date;
             const rectHeight = hasDetails && hasExtra ? 40 : (hasDetails || hasExtra ? 28 : 20);
 
-            doc.setFillColor(240, 240, 240);
+            doc.setFillColor("#f4f4f4");
             doc.setDrawColor(0, 0, 0);
             doc.setLineWidth(0.2);
             doc.rect(13, currentY, W - 26, rectHeight, "FD"); // Draw filled rectangle with border
@@ -144,6 +144,7 @@ export function buildPdf(
                 fontSize: 12,
                 textColor: "black",
                 cellPadding: 4,
+                fillColor: "#f4f4f4",
                 lineColor: "black",
                 lineWidth: 0.2,
             },
