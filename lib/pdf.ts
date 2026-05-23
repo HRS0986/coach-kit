@@ -41,7 +41,7 @@ export function buildPdf(
         let currentY = 20;
 
         // 1. Day name/label (centered horizontally)
-        doc.setFont("segoe-ui", "bold");
+        doc.setFont("helvetica", "bold");
         doc.setFontSize(16);
         doc.setTextColor(255, 0, 0);
         const dayText = day.dayName ? day.dayName.toUpperCase() : `DAY ${index + 1}`;
@@ -62,62 +62,62 @@ export function buildPdf(
             doc.rect(13, currentY, W - 26, rectHeight, "FD"); // Draw filled rectangle with border
 
             if (clientName) {
-                doc.setFontSize(11); doc.setFont("segoe-ui", "normal"); doc.setTextColor(50, 50, 50);
+                doc.setFontSize(11); doc.setFont("helvetica", "normal"); doc.setTextColor(50, 50, 50);
                 doc.text("Client: ", 18, currentY + 10);
-                doc.setFontSize(12); doc.setFont("segoe-ui", "bold"); doc.setTextColor(30, 30, 30);
+                doc.setFontSize(12); doc.setFont("helvetica", "bold"); doc.setTextColor(30, 30, 30);
                 doc.text(clientName, 35, currentY + 10);
             }
 
             if (trainerName) {
-                doc.setFontSize(11); doc.setFont("segoe-ui", "normal"); doc.setTextColor(50, 50, 50);
+                doc.setFontSize(11); doc.setFont("helvetica", "normal"); doc.setTextColor(50, 50, 50);
                 doc.text("Trainer: ", W / 2, currentY + 10);
-                doc.setFontSize(12); doc.setFont("segoe-ui", "bold"); doc.setTextColor(30, 30, 30);
+                doc.setFontSize(12); doc.setFont("helvetica", "bold"); doc.setTextColor(30, 30, 30);
                 doc.text(trainerName, W / 2 + 20, currentY + 10);
             }
 
             if (age) {
-                doc.setFontSize(11); doc.setFont("segoe-ui", "normal"); doc.setTextColor(50, 50, 50);
+                doc.setFontSize(11); doc.setFont("helvetica", "normal"); doc.setTextColor(50, 50, 50);
                 doc.text("Age: ", 18, currentY + 18);
-                doc.setFontSize(12); doc.setFont("segoe-ui", "bold"); doc.setTextColor(30, 30, 30);
+                doc.setFontSize(12); doc.setFont("helvetica", "bold"); doc.setTextColor(30, 30, 30);
                 doc.text(age.toString(), 35, currentY + 18);
             }
 
             if (height) {
-                doc.setFontSize(11); doc.setFont("segoe-ui", "normal"); doc.setTextColor(50, 50, 50);
+                doc.setFontSize(11); doc.setFont("helvetica", "normal"); doc.setTextColor(50, 50, 50);
                 doc.text("Height: ", W / 2, currentY + 18);
-                doc.setFontSize(12); doc.setFont("segoe-ui", "bold"); doc.setTextColor(30, 30, 30);
+                doc.setFontSize(12); doc.setFont("helvetica", "bold"); doc.setTextColor(30, 30, 30);
                 doc.text(height.toString(), W / 2 + 20, currentY + 18);
             }
 
             if (weight) {
-                doc.setFontSize(11); doc.setFont("segoe-ui", "normal"); doc.setTextColor(50, 50, 50);
+                doc.setFontSize(11); doc.setFont("helvetica", "normal"); doc.setTextColor(50, 50, 50);
                 doc.text("Weight: ", 18, currentY + 26);
-                doc.setFontSize(12); doc.setFont("segoe-ui", "bold"); doc.setTextColor(30, 30, 30);
+                doc.setFontSize(12); doc.setFont("helvetica", "bold"); doc.setTextColor(30, 30, 30);
                 doc.text(weight.toString(), 35, currentY + 26);
             }
 
             if (bmi) {
-                doc.setFontSize(11); doc.setFont("segoe-ui", "normal"); doc.setTextColor(50, 50, 50);
+                doc.setFontSize(11); doc.setFont("helvetica", "normal"); doc.setTextColor(50, 50, 50);
                 doc.text("BMI: ", W / 2, currentY + 26);
-                doc.setFontSize(12); doc.setFont("segoe-ui", "bold"); doc.setTextColor(30, 30, 30);
+                doc.setFontSize(12); doc.setFont("helvetica", "bold"); doc.setTextColor(30, 30, 30);
                 doc.text(bmi.toString(), W / 2 + 20, currentY + 26);
             }
 
             if (workoutPeriod) {
-                doc.setFontSize(11); doc.setFont("segoe-ui", "normal"); doc.setTextColor(50, 50, 50);
+                doc.setFontSize(11); doc.setFont("helvetica", "normal"); doc.setTextColor(50, 50, 50);
                 doc.text("Period: ", 18, currentY + 34);
-                doc.setFontSize(12); doc.setFont("segoe-ui", "bold"); doc.setTextColor(30, 30, 30);
+                doc.setFontSize(12); doc.setFont("helvetica", "bold"); doc.setTextColor(30, 30, 30);
                 doc.text(workoutPeriod.toString(), 35, currentY + 34);
             }
 
             if (date) {
-                doc.setFontSize(11); doc.setFont("segoe-ui", "normal"); doc.setTextColor(50, 50, 50);
+                doc.setFontSize(11); doc.setFont("helvetica", "normal"); doc.setTextColor(50, 50, 50);
                 doc.text("Date: ", W / 2, currentY + 34);
-                doc.setFontSize(12); doc.setFont("segoe-ui", "bold"); doc.setTextColor(30, 30, 30);
+                doc.setFontSize(12); doc.setFont("helvetica", "bold"); doc.setTextColor(30, 30, 30);
                 doc.text(date.toString(), W / 2 + 20, currentY + 34);
             }
 
-            doc.setFontSize(12); doc.setFont("segoe-ui", "normal"); doc.setTextColor(50, 50, 50);
+            doc.setFontSize(12); doc.setFont("helvetica", "normal"); doc.setTextColor(50, 50, 50);
             currentY += rectHeight + 5; // Move currentY below the rectangle for the table
         }
 
@@ -140,7 +140,7 @@ export function buildPdf(
                 cellPadding: 4,
             },
             styles: {
-                font: "segoe-ui",
+                font: "helvetica",
                 fontSize: 12,
                 textColor: "black",
                 cellPadding: 4,
