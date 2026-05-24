@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CoachKit
 
-## Getting Started
+CoachKit is a Next.js web application designed for personal trainers and fitness coaches to streamline the creation of workout schedules. It transforms messy, unstructured text or client messages into beautifully formatted, ready-to-share PDF workout programs with the power of AI.
 
-First, run the development server:
+## 🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **AI-Powered Parsing**: Uses Google Gemini to intelligently parse unstructured workout texts and convert them into structured JSON schedules.
+- **Interactive Schedule Editor**: Refine and adjust the generated workouts using a drag-and-drop interface powered by `@dnd-kit`.
+- **PDF Generation**: Instantly export schedules to professional, clean PDF documents using `jspdf` and `jspdf-autotable`.
+- **Secure Authentication**: Restricts access via Firebase Authentication (Google Sign-In) to authorized users only.
+- **Modern UI**: Fast and beautiful interface built with React 19, Next.js App Router, Tailwind CSS 4, and shadcn/ui.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
+- **UI/Styling**: [React 19](https://react.dev/), [Tailwind CSS v4](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/)
+- **AI Integration**: [@google/genai](https://www.npmjs.com/package/@google/genai) (Gemini Models)
+- **Authentication**: [Firebase Auth](https://firebase.google.com/)
+- **PDF Generation**: [jsPDF](https://github.com/parallax/jsPDF)
+- **Drag & Drop**: [@dnd-kit](https://dndkit.com/)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📝 Prerequisites
 
-## Learn More
+To run this project locally, you will need:
+- Node.js (v20 or newer recommended)
+- A Google Gemini API key
+- A Firebase project configured for Google Authentication
 
-To learn more about Next.js, take a look at the following resources:
+## ⚙️ Getting Started
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Clone the repository** (or download the source):
+   ```bash
+   git clone <repository-url>
+   cd coach-kit
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. **Install dependencies**:
+   ```bash
+   npm install
+   # or yarn install / pnpm install
+   ```
 
-## Deploy on Vercel
+3. **Configure Environment Variables**:
+   Create a `.env` or `.env.local` file in the root directory and add the following keys:
+   ```env
+   # Firebase configuration
+   NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
+   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
+   NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_firebase_project_id
+   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
+   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_firebase_sender_id
+   NEXT_PUBLIC_FIREBASE_APP_ID=your_firebase_app_id
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   # Google Gemini AI Key
+   GEMINI_API_KEY=your_gemini_api_key
+   ```
+   *Note: Modify `ALLOWED_EMAILS` in `lib/auth-context.tsx` to include your email for authorized access if applicable.*
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. **Run the development server**:
+   ```bash
+   npm run dev
+   ```
+
+5. **Open the App**:
+   Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 🚀 Usage
+
+1. **Log in** using an authorized Google account.
+2. Navigate to the **Dashboard**.
+3. **Paste** a rough text description of a workout schedule into the provided input area.
+4. Let the **AI parse** the instructions into organized days, sets, and reps.
+5. **Review and adjust** the schedule in the interactive editor.
+6. Click **Generate PDF** to export and share the finalized workout program with your clients.
+
