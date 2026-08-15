@@ -183,14 +183,7 @@ export default function PreviewPage() {
         const updatedDays = [...days];
         const item = { ...updatedDays[dayIndex].exercises[exerciseIndex] };
 
-        if (field === "reps") {
-            item.reps = value
-                .split(",")
-                .map((v) => parseInt(v.trim()))
-                .filter((n) => !isNaN(n));
-        } else {
-            (item as any)[field] = value;
-        }
+        (item as any)[field] = value;
         updatedDays[dayIndex].exercises[exerciseIndex] = item;
         setDays(updatedDays);
     };
@@ -201,7 +194,7 @@ export default function PreviewPage() {
             no: updatedDays[dayIndex].exercises.length + 1,
             exercise: "New Exercise",
             sets: "3",
-            reps: [10, 10, 10],
+            reps: "10, 10, 10",
         });
         setDays(updatedDays);
     };
@@ -493,7 +486,7 @@ export default function PreviewPage() {
                                                         </Label>
                                                         <Input
                                                             value={
-                                                                exercise.reps ? exercise.reps.join(", ") : ""
+                                                                exercise.reps ?? ""
                                                             }
                                                             onChange={(e) =>
                                                                 handleExerciseChange(

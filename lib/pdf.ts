@@ -5,7 +5,7 @@ export interface ExerciseRow {
     no: number;
     exercise: string;
     sets: number | string;
-    reps: number[];
+    reps: string;
 }
 
 export interface DaySchedule {
@@ -129,7 +129,7 @@ export function buildPdf(
                 (i + 1).toString(), // Using array index or row.no
                 row.exercise,
                 row.sets.toString(),
-                row.reps && row.reps.length > 0 ? [...row.reps].sort((a, b) => b - a).join(", ") : "",
+                row.reps.toString(),
             ]),
             theme: "grid",
             headStyles: {
