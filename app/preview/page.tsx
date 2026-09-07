@@ -51,9 +51,11 @@ import {
     Trash2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/lib/auth-context";
+
+const DRAFT_STORAGE_KEY = "coachkit:workoutDraft";
 
 function SortableTabTrigger({ id, dayName }: { id: string, dayName: string }) {
     const {
@@ -106,6 +108,8 @@ export default function PreviewPage() {
     const [isLoaded, setIsLoaded] = useState(false);
     const [isManual, setIsManual] = useState(false);
     const { user, loading: authLoading } = useAuth();
+    const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const hasHydratedRef = useRef(false);
 
     useEffect(() => {
         if (!authLoading && !user) {
@@ -113,38 +117,89 @@ export default function PreviewPage() {
             return;
         }
 
-        // Read from session storage on mount
-        const storedSchedule = sessionStorage.getItem("workoutData");
-        if (storedSchedule) {
+        // Guards against React Strict Mode's dev-only double-invoke, which
+        // would otherwise consume the sessionStorage handoff twice and
+        // incorrectly bounce back to the dashboard on the second pass.
+        if (hasHydratedRef.current) return;
+        hasHydratedRef.current = true;
+
+        const hydrateFromParsed = (parsed: any) => {
+            if (parsed.isManual) {
+                setIsManual(true);
+            }
+            if (parsed.days) {
+                const daysWithId = parsed.days.map((d: any) => ({ ...d, id: d.id || Math.random().toString(36).substring(2, 9) }));
+                setDays(daysWithId);
+                if (daysWithId.length > 0) setActiveTab(daysWithId[0].id);
+            }
+            setClientDetails((prev) => ({
+                ...prev,
+                clientName: parsed.name || parsed.clientName || prev.clientName,
+                trainerName: parsed.trainerName || prev.trainerName,
+                age: parsed.age ? String(parsed.age) : prev.age,
+                height: parsed.height ? String(parsed.height) : prev.height,
+                weight: parsed.weight ? String(parsed.weight) : prev.weight,
+                bmi: parsed.bmi ? String(parsed.bmi) : prev.bmi,
+                workoutPeriod: parsed.workoutPeriod || prev.workoutPeriod,
+                date: parsed.date || prev.date,
+            }));
+        };
+
+        // A fresh handoff from the dashboard takes priority and replaces any
+        // in-progress draft. It's consumed once so returning to this page
+        // later (back button, reopened tab) resumes the saved draft instead.
+        const handoff = sessionStorage.getItem("workoutData");
+        if (handoff) {
             try {
-                const parsed = JSON.parse(storedSchedule);
-                if (parsed.isManual) {
-                    setIsManual(true);
-                }
-                if (parsed.days) {
-                    const daysWithId = parsed.days.map((d: any) => ({ ...d, id: d.id || Math.random().toString(36).substring(2, 9) }));
-                    setDays(daysWithId);
-                    if (daysWithId.length > 0) setActiveTab(daysWithId[0].id);
-                }
-                setClientDetails((prev) => ({
-                    ...prev,
-                    clientName: parsed.name || prev.clientName,
-                    age: parsed.age ? String(parsed.age) : prev.age,
-                    height: parsed.height ? String(parsed.height) : prev.height,
-                    weight: parsed.weight ? String(parsed.weight) : prev.weight,
-                    bmi: parsed.bmi ? String(parsed.bmi) : prev.bmi,
-                    workoutPeriod: parsed.workoutPeriod || prev.workoutPeriod,
-                    date: parsed.date || prev.date,
-                }));
+                hydrateFromParsed(JSON.parse(handoff));
             } catch (err) {
                 console.error("Failed to parse stored schedule");
             }
+            sessionStorage.removeItem("workoutData");
             setIsLoaded(true);
-        } else if (!authLoading) {
-            // If no data, send back to home
+            return;
+        }
+
+        // No fresh handoff - try resuming an autosaved draft (survives
+        // browser close, back navigation, and tab reload).
+        const draft = localStorage.getItem(DRAFT_STORAGE_KEY);
+        if (draft) {
+            try {
+                hydrateFromParsed(JSON.parse(draft));
+                setIsLoaded(true);
+                return;
+            } catch (err) {
+                console.error("Failed to parse saved draft");
+            }
+        }
+
+        if (!authLoading) {
+            // Nothing to load, send back to the dashboard
             router.push("/dashboard");
         }
     }, [router, authLoading, user]);
+
+    // Autosave the in-progress edit to localStorage so it can be resumed
+    // after an accidental browser close or back navigation.
+    useEffect(() => {
+        if (!isLoaded) return;
+
+        if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+        saveTimeoutRef.current = setTimeout(() => {
+            try {
+                localStorage.setItem(
+                    DRAFT_STORAGE_KEY,
+                    JSON.stringify({ ...clientDetails, days, isManual, savedAt: Date.now() }),
+                );
+            } catch (err) {
+                console.error("Failed to save draft");
+            }
+        }, 400);
+
+        return () => {
+            if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+        };
+    }, [clientDetails, days, isManual, isLoaded]);
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
